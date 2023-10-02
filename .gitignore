@@ -1,0 +1,10 @@
+# IDE related
+.vscode/
+.idea/
+
+# Dev build
+build/
+tmp/
+
+# Environment variables
+.env
