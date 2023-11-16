@@ -53,15 +53,12 @@ func (c *AuthController) LoginController(ctx echo.Context) error {
 		})
 	}
 
+	userRes := payload.ToReadUserResponse(user)
+
 	res := payload.LoginResponse{
 		AccessToken: accessToken.Token,
 		ExpiredAt:   accessToken.ExpiredAt,
-		User: payload.UserResponse{
-			ID:        user.ID,
-			Email:     user.Email,
-			CreatedAt: user.CreatedAt,
-			UpdatedAt: &user.UpdatedAt,
-		},
+		User:        userRes,
 	}
 
 	return ctx.JSON(http.StatusOK, map[string]interface{}{
