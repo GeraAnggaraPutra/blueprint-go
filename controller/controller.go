@@ -22,3 +22,14 @@ func (c *Controller) HelloWorldController(ctx echo.Context) error {
 		"message": "Hello World",
 	})
 }
+
+func (c *Controller) GetUserController(ctx echo.Context) error {
+	user, err := c.service.GetUserSvc()
+	if err != nil {
+		return err
+	}
+
+	return ctx.JSON(http.StatusOK, map[string]interface{}{
+		"data": user,
+	})
+}
