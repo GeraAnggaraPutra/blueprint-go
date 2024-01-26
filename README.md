@@ -25,7 +25,7 @@ To get started this go template, follow the instructions below.
 
 ### Prerequisites
 
-- [Go](https://golang.org/dl/): My Awesome Go Project is built with Go.
+- [GO](https://golang.org/dl/): Programming language.
 - [Download and install PostgreSQL](https://www.postgresql.org/download/).
   - Create a database for your project and update the configuration accordingly.
 - [Postman](https://www.postman.com/downloads/): Install Postman for API testing.
@@ -62,6 +62,7 @@ To get started this go template, follow the instructions below.
 
 ## Folder Structure
 
+```
 blueprint-go/
 |-- constant/
 |-- controller/
@@ -99,5 +100,6 @@ blueprint-go/
 |-- go.sum
 |-- README.md
 |-- server.go
+```
 
 <a href="https://golang.org/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/go/go-original.svg" alt="golang" width="40" height="40"/> </a>
