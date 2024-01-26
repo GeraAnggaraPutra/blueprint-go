@@ -4,16 +4,16 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
 
-	"github.com/GeraAnggaraPutra/blueprint-go/controller"
-	"github.com/GeraAnggaraPutra/blueprint-go/repository"
-	"github.com/GeraAnggaraPutra/blueprint-go/service"
+	controller "github.com/GeraAnggaraPutra/blueprint-go/controller/auth"
+	"github.com/GeraAnggaraPutra/blueprint-go/repository/auth/query"
+	service "github.com/GeraAnggaraPutra/blueprint-go/service/auth"
 )
 
-func AddAuthRoute(e *echo.Echo, db *sqlx.DB) {
-	authRepository := repository.NewAuthRepository(db)
-	authService := service.NewAuthService(authRepository)
+func addAuthRoute(e *echo.Echo, db *sqlx.DB) {
+	authQuery := query.NewAuthQuery(db)
+	authService := service.NewAuthService(authQuery)
 	authController := controller.NewAuthController(authService)
 
 	authRoute := e.Group("/auth")
-	authRoute.POST("/login", authController.LoginController)
+	authRoute.POST("/login", authController.LoginCtrl)
 }

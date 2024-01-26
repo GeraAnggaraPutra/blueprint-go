@@ -3,10 +3,10 @@ package payload
 import (
 	"time"
 
-	"github.com/GeraAnggaraPutra/blueprint-go/repository/auth/model"
+	"github.com/GeraAnggaraPutra/blueprint-go/repository/user_management/model"
 )
 
-type UserResponse struct {
+type readUserResponse struct {
 	ID        int64        `json:"id"`
 	GUID      string       `json:"guid"`
 	Email     string       `json:"email"`
@@ -22,7 +22,7 @@ type RoleResponse struct {
 	Name string `json:"name"`
 }
 
-func ToReadUserResponse(entity model.User) (res UserResponse) {
+func ToReadUserResponse(entity model.User) (res readUserResponse) {
 	res.ID = entity.ID
 	res.GUID = entity.GUID
 	res.Email = entity.Email
@@ -42,10 +42,14 @@ func ToReadUserResponse(entity model.User) (res UserResponse) {
 	return
 }
 
-type LoginResponse struct {
-	GUID        string       `json:"guid"`
-	AccessToken string       `json:"access_token"`
-	ExpiredAt   time.Time    `json:"expired_at"`
-	CreatedAt   time.Time    `json:"created_at"`
-	User        UserResponse `json:"user"`
+func ToReadUserResponses(entities []model.User) (response []*readUserResponse) {
+	response = make([]*readUserResponse, len(entities))
+
+	for i := range entities {
+		response[i] = new(readUserResponse)
+		data := ToReadUserResponse(entities[i])
+		response[i] = &data
+	}
+
+	return
 }

@@ -5,11 +5,12 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
-
 )
 
 type AccessTokenPayload struct {
-	ID int64
+	GUID     string `json:"guid"`
+	UserGUID string `json:"user_guid"`
+	Role     string `json:"role"`
 	jwt.StandardClaims
 }
 
@@ -32,7 +33,9 @@ func CreateJWT(req AccessTokenPayload) (response JWTPayload, err error) {
 	expiredAt := time.Now().Add(expiredDuration)
 
 	jwtClaims := &AccessTokenPayload{
-		ID: req.ID,
+		GUID:     req.GUID,
+		UserGUID: req.UserGUID,
+		Role:     req.Role,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expiredAt.Unix(),
 		},
@@ -45,7 +48,7 @@ func CreateJWT(req AccessTokenPayload) (response JWTPayload, err error) {
 	}
 
 	response = JWTPayload{
-		Token: token,
+		Token:     token,
 		ExpiredAt: expiredAt,
 	}
 

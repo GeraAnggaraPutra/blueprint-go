@@ -6,18 +6,28 @@ import (
 	"strings"
 
 	"github.com/golang-jwt/jwt"
+	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
-
-	"github.com/GeraAnggaraPutra/blueprint-go/db"
-
 )
 
 type JWTClaim struct {
-	ID int
+	GUID     string
+	UserGUID string
+	Role     string
 	jwt.StandardClaims
 }
 
-func ValidateToken(next echo.HandlerFunc) echo.HandlerFunc {
+type MiddlewareToken struct {
+	db *sqlx.DB
+}
+
+func NewMiddlewareToken(db *sqlx.DB) *MiddlewareToken {
+	return &MiddlewareToken{
+		db: db,
+	}
+}
+
+func (mt *MiddlewareToken) ValidateToken(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var reqToken string
 
@@ -30,17 +40,17 @@ func ValidateToken(next echo.HandlerFunc) echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusUnauthorized)
 		}
 
-		if !CheckSession(reqToken) {
-			return echo.NewHTTPError(http.StatusUnauthorized)
-		}
-
 		jwtResponse, err := ClaimsJWT(reqToken)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusUnauthorized, "You are not login yet")
 
 		}
 
-		c.Set("jwt-res", jwtResponse)
+		if !mt.checkSession(jwtResponse.GUID) {
+			return echo.NewHTTPError(http.StatusUnauthorized)
+		}
+
+		c.Set("claims", jwtResponse)
 
 		return next(c)
 	}
@@ -69,7 +79,9 @@ func ClaimsJWT(token string) (response JWTClaim, err error) {
 	}
 
 	response = JWTClaim{
-		ID: jwtClaims.ID,
+		GUID:     jwtClaims.GUID,
+		UserGUID: jwtClaims.UserGUID,
+		Role:     jwtClaims.Role,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: jwtClaims.ExpiresAt,
 		},
@@ -78,19 +90,33 @@ func ClaimsJWT(token string) (response JWTClaim, err error) {
 	return
 }
 
-func CheckSession(token string) bool {
-	var exist bool
-	db, err := db.Init()
-	if err != nil {
-		return false
-	}
-	defer db.Close()
+func (mt *MiddlewareToken) checkSession(guid string) (exists bool) {
+	const stmt = `
+		SELECT EXISTS (
+			SELECT 
+				1 
+			FROM 
+				sessions 
+			WHERE 
+				guid = $1
+		)
+	`
+	_ = mt.db.Get(&exists, stmt, guid)
 
-	query := `SELECT EXISTS (SELECT 1 FROM user_token WHERE token = $1)`
-	err = db.Get(&exist, query, token)
-	if err != nil {
-		return false
-	}
-	return exist
+	return
+}
 
+func ValidateSuperAdmin(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) (err error) {
+		claims, _ := c.Get("claims").(JWTClaim)
+
+		if claims.Role != "Super Admin" {
+			return echo.NewHTTPError(
+				http.StatusForbidden,
+				"your permission is not allowed to access this resource",
+			)
+		}
+
+		return next(c)
+	}
 }
