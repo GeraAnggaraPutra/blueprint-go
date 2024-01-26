@@ -7,6 +7,7 @@ import (
 
 	jwt "github.com/GeraAnggaraPutra/blueprint-go/handler/jwt"
 	"github.com/GeraAnggaraPutra/blueprint-go/helpers/crypt"
+	"github.com/GeraAnggaraPutra/blueprint-go/module"
 	payload "github.com/GeraAnggaraPutra/blueprint-go/payload/auth"
 	"github.com/GeraAnggaraPutra/blueprint-go/service"
 )
@@ -23,23 +24,17 @@ func (c *AuthController) LoginController(ctx echo.Context) error {
 	var request payload.LoginRequest
 
 	if err := ctx.Bind(&request); err != nil {
-		return ctx.JSON(http.StatusBadRequest, map[string]interface{}{
-			"message": "Failed parse login request",
-		})
+		return module.ResponseData(ctx, http.StatusBadRequest, nil, err.Error(), "Failed parse login request")
 	}
 
 	user, err := c.service.GetUserByEmailSvc(request.Email)
 	if err != nil {
-		return ctx.JSON(http.StatusNotFound, map[string]interface{}{
-			"message": "Email not found",
-		})
+		return module.ResponseData(ctx, http.StatusNotFound, nil, err.Error(), "Email not found")
 	}
 
 	err = crypt.ComparePassword(user.Password, request.Password)
 	if err != nil {
-		return ctx.JSON(http.StatusBadRequest, map[string]interface{}{
-			"message": "Password didn't match",
-		})
+		return module.ResponseData(ctx, http.StatusBadRequest, nil, err.Error(), "Password didn't match")
 	}
 
 	payloadJWT := jwt.AccessTokenPayload{
@@ -48,9 +43,7 @@ func (c *AuthController) LoginController(ctx echo.Context) error {
 
 	accessToken, err := jwt.CreateJWT(payloadJWT)
 	if err != nil {
-		return ctx.JSON(http.StatusBadRequest, map[string]interface{}{
-			"message": "Failed create session",
-		})
+		return module.ResponseData(ctx, http.StatusBadRequest, nil, err.Error(), "Failed create session")
 	}
 
 	userRes := payload.ToReadUserResponse(user)
@@ -61,8 +54,5 @@ func (c *AuthController) LoginController(ctx echo.Context) error {
 		User:        userRes,
 	}
 
-	return ctx.JSON(http.StatusOK, map[string]interface{}{
-		"message": "Successfully login",
-		"data":    res,
-	})
+	return module.ResponseData(ctx, http.StatusOK, res, nil, "Successfully login")
 }
