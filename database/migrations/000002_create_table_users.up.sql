@@ -9,8 +9,24 @@ CREATE TABLE "users" (
   "updated_at" timestamp,
   "updated_by" varchar
 );
-
 INSERT INTO users (guid, email, password, role_guid)
-VALUES
-(gen_random_uuid(), 'super1@gmail.com', '$2a$12$LQi1CpKB/dUNMKko2sHd/.umM9hdOYSoMRF7b8JbgiV3ZvSWIEqQC', (SELECT guid FROM roles WHERE name = 'Super Admin'))
-ON CONFLICT DO NOTHING;
+VALUES (
+    gen_random_uuid(),
+    'super1@gmail.com',
+    '$2a$12$LQi1CpKB/dUNMKko2sHd/.umM9hdOYSoMRF7b8JbgiV3ZvSWIEqQC',
+    (
+      SELECT guid
+      FROM roles
+      WHERE name = 'Super Admin'
+    )
+  ),
+  (
+    gen_random_uuid(),
+    'admin@gmail.com',
+    '$2a$12$LQi1CpKB/dUNMKko2sHd/.umM9hdOYSoMRF7b8JbgiV3ZvSWIEqQC',
+    (
+      SELECT guid
+      FROM roles
+      WHERE name = 'Admin'
+    )
+  ) ON CONFLICT DO NOTHING;

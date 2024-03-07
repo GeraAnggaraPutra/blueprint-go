@@ -43,7 +43,6 @@ func (mt *MiddlewareToken) ValidateToken(next echo.HandlerFunc) echo.HandlerFunc
 		jwtResponse, err := ClaimsJWT(reqToken)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusUnauthorized, "You are not login yet")
-
 		}
 
 		if !mt.checkSession(jwtResponse.GUID) {

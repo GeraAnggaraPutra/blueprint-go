@@ -5,21 +5,12 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-
-	"github.com/GeraAnggaraPutra/blueprint-go/db"
 )
 
-func Init() error {
-	e := echo.New()
-
-	db, err := db.Init()
-	if err != nil {
-		return err
-	}
-	defer db.Close()
-
+func Routes(e *echo.Echo, db *sqlx.DB) error {
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		Skipper:      middleware.DefaultSkipper,
@@ -34,6 +25,8 @@ func Init() error {
 			"message": fmt.Sprintf("%s API is Running", os.Getenv("APP_NAME")),
 		})
 	})
+
+	e.Static("/media", "public")
 
 	addAuthRoute(e, db)
 	addUserManagementRoute(e, db)
