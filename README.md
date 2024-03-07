@@ -57,13 +57,14 @@ To get started this go template, follow the instructions below.
 
 4. Run the application
     ```bash
-    go run server.go
+    go run cmd/server.go
     ```
 
 ## Folder Structure
 
 ```
 blueprint-go/
+|-- cmd/
 |-- constant/
 |-- controller/
 |   |-- feature/
@@ -99,7 +100,6 @@ blueprint-go/
 |-- go.mod
 |-- go.sum
 |-- README.md
-|-- server.go
 ```
 
 <a href="https://golang.org/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/go/go-original.svg" alt="golang" width="40" height="40"/> </a>
