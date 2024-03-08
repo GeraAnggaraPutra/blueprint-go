@@ -9,8 +9,8 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 
-	"github.com/GeraAnggaraPutra/blueprint-go/db"
-	"github.com/GeraAnggaraPutra/blueprint-go/routes"
+	"github.com/GeraAnggaraPutra/blueprint-go/config"
+	"github.com/GeraAnggaraPutra/blueprint-go/src/api"
 )
 
 func main() {
@@ -19,7 +19,7 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	db, err := db.NewDatabasePotgresql()
+	db, err := config.NewDatabasePotgresql()
 	if err != nil {
 		log.Fatal("Failed to connect database")
 	}
@@ -41,8 +41,8 @@ func main() {
 
 	log.Printf("serving REST HTTP server | config: name=%s, host=%s, port=%s", os.Getenv("APP_NAME"), os.Getenv("APP_HOST"), os.Getenv("APP_PORT"))
 
-	err = routes.Routes(e, db)
+	err = api.Routes(e, db)
 	if err != nil {
-		log.Fatalf("Error start the server with err: %s", err)
+		log.Printf("Error start the server with err: %s", err)
 	}
 }

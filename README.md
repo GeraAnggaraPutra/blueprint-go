@@ -65,35 +65,27 @@ To get started this go template, follow the instructions below.
 ```
 blueprint-go/
 |-- cmd/
+|-- config/
 |-- constant/
-|-- controller/
-|   |-- feature/
 |-- database/
 |   |-- migrations/
-|-- db/
-|-- handler/
-|   |-- auth/
-|   |-- jwt/
 |-- helpers/
-|   |-- crypt/
-|   |-- currency/
-|   |-- file/
-|   |-- mail/
-|   |-- pdf/
-|   |-- utility/
-|-- middleware/
-|-- module/
-|-- payload/
-|   |-- feature/
-|-- public/
-|-- repository/
-|   |-- feature/
-|       |-- dto/
-|       |-- model/
-|       |-- query/
-|-- routes/
-|-- service/
-|   |-- feature/
+|-- src/
+|   |-- api/
+|   |-- domain/
+|       |-- feature/
+|           |-- controller/
+|           |-- payload/
+|           |-- repository/
+|               |-- dto/
+|               |-- model/
+|               |-- query/
+|           |-- routes/
+|           |-- service/
+|   |-- handler/
+|   |-- middleware/
+|   |-- module/
+|   |-- public/
 |-- .env
 |-- .gitignore
 |-- .golangci.yaml

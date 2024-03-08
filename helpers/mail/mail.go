@@ -1,14 +1,14 @@
 package mail
 
 import (
-	"fmt"
+	"log"
 	"os"
 	"strconv"
 
 	"gopkg.in/gomail.v2"
 )
 
-func SendMail(subject, body, recipientEmail string) error {
+func SendMail(subject, body, recipientEmail string) (err error) {
 	var (
 		smtpHost     = os.Getenv("MAIL_SMTP_HOST")
 		smtpPortStr  = os.Getenv("MAIL_SMTP_PORT")
@@ -19,7 +19,8 @@ func SendMail(subject, body, recipientEmail string) error {
 
 	smtpPort, err := strconv.Atoi(smtpPortStr)
 	if err != nil {
-		return fmt.Errorf("failed to convert SMTP port to integer: %s", err)
+		log.Printf("failed to convert SMTP port to integer: %s", err)
+		return
 	}
 
 	message := gomail.NewMessage()
@@ -30,9 +31,10 @@ func SendMail(subject, body, recipientEmail string) error {
 
 	dialer := gomail.NewDialer(smtpHost, smtpPort, smtpUsername, smtpPassword)
 
-	if err := dialer.DialAndSend(message); err != nil {
-		return fmt.Errorf("failed to send email: %s", err)
+	if err = dialer.DialAndSend(message); err != nil {
+		log.Printf("failed to send email: %s", err)
+		return
 	}
 
-	return nil
+	return
 }
